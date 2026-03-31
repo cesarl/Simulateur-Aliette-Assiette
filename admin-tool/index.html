@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Outil admin - Tag des images</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background-color: #f5f5f5;
+        color: #222;
+      }
+
+      h1 {
+        margin-top: 0;
+        font-size: 22px;
+      }
+
+      .step {
+        margin-bottom: 24px;
+        padding: 16px;
+        border-radius: 8px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      }
+
+      .step-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      input[type="file"] {
+        display: block;
+        margin-top: 8px;
+      }
+
+      .status {
+        font-size: 13px;
+        color: #555;
+        margin-top: 6px;
+      }
+
+      .tagging-zone {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .tag-card {
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+        padding: 8px;
+        background-color: #fafafa;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .tag-card img {
+        width: 100%;
+        height: 120px;
+        object-fit: contain;
+        background-color: #ffffff;
+        border-radius: 6px;
+      }
+
+      .tag-card-filename {
+        font-size: 12px;
+        color: #444;
+        word-break: break-all;
+      }
+
+      .tag-card input[type="text"] {
+        width: 100%;
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid #cccccc;
+        font-size: 12px;
+      }
+
+      .tag-card .field-label {
+        font-size: 11px;
+        color: #666;
+        margin-top: 2px;
+      }
+
+      .info-line {
+        font-size: 12px;
+        color: #444;
+        background-color: #ffffff;
+        border: 1px solid #e2e2e2;
+        border-radius: 6px;
+        padding: 6px 8px;
+        word-break: break-all;
+      }
+
+      .card-badge {
+        align-self: flex-start;
+        font-size: 11px;
+        border-radius: 999px;
+        padding: 2px 8px;
+        background: #e9f5ff;
+        color: #0a5a94;
+      }
+
+      .card-badge.new {
+        background: #e9fbe9;
+        color: #1f6b1f;
+      }
+
+      #generate-json-btn {
+        margin-top: 12px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #cccccc;
+        background-color: #f7f7f7;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .category-editor {
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+        padding: 10px;
+        background: #fafafa;
+        margin-bottom: 12px;
+      }
+
+      .category-editor-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .category-editor-row input {
+        flex: 1;
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid #cccccc;
+      }
+
+      .category-editor-row button {
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid #cccccc;
+        background: #f2f2f2;
+        cursor: pointer;
+      }
+
+      .category-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .category-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: #eaf3ff;
+        font-size: 12px;
+      }
+
+      .category-chip button {
+        border: 0;
+        background: transparent;
+        color: #8a0000;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .category-boxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .category-box {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Outil admin – Préparation des nouvelles images</h1>
+
+    <div class="step">
+      <div class="step-title">
+        Étape 1 – Charger le dossier du projet (images + data.json)
+      </div>
+      <input
+        type="file"
+        id="project-upload"
+        webkitdirectory
+        directory
+        multiple
+      />
+      <div id="project-status" class="status">
+        Aucun dossier projet chargé pour l’instant.
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-title">Étape 2 – Éditer le catalogue (existant + nouvelles images)</div>
+      <div class="category-editor">
+        <div class="field-label">Éditeur de catégories (ajout / suppression)</div>
+        <div id="category-list" class="category-list"></div>
+        <div class="category-editor-row">
+          <input
+            type="text"
+            id="new-category-input"
+            placeholder="Nouvelle catégorie..."
+          />
+          <button id="add-category-btn" type="button">Ajouter</button>
+        </div>
+      </div>
+      <div id="tagging-zone" class="tagging-zone">
+        <!-- Cartes générées en JS -->
+      </div>
+      <datalist id="categories"></datalist>
+      <button id="generate-json-btn" type="button">
+        Générer et télécharger le nouveau catalogue JSON
+      </button>
+      <div class="status">
+        ID et URL sont informatifs. Les catégories se gèrent via l’éditeur ci-dessus et se cochent par image.
+      </div>
+    </div>
+
+    <script src="admin.js"></script>
+  </body>
+</html>
+
