@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulateur de peinture sur céramique</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Fabric.js CDN (version UMD avec global window.fabric) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Colonne gauche : espace de travail -->
+      <div id="workspace-column">
+        <div id="plate-container">
+          <div id="plate-placeholder"></div>
+          <canvas id="canvas-assiette" width="600" height="600"></canvas>
+        </div>
+      </div>
+
+      <!-- Colonne droite : recherche / catégories / galerie -->
+      <div id="controls-column">
+        <div id="controls-header">
+          <button id="add-text-btn" type="button">Ajouter du texte</button>
+          <div id="history-tools">
+            <button id="undo-btn" type="button">Annuler (Ctrl+Z)</button>
+            <button id="redo-btn" type="button">Rétablir (Ctrl+Y)</button>
+          </div>
+          <input
+            type="text"
+            id="search"
+            placeholder="Rechercher un motif..."
+            autocomplete="off"
+          />
+          <select id="category-select">
+            <option value="all">Toutes les catégories</option>
+          </select>
+        </div>
+        <div id="gallery"></div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
